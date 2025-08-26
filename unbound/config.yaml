@@ -1,0 +1,16 @@
+name: "Unbound"
+version: "1.0.0"
+slug: "unbound" 
+description: "Unbound DNS resolver"
+arch:
+  - amd64
+  - aarch64
+  - armv7
+init: false
+startup: services
+boot: auto
+ports:
+  5353/tcp: 5353
+  5353/udp: 5353
+options: {}
+schema: {}

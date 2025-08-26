@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Test addon build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build addon
+        uses: home-assistant/builder@2024.03.5
+        with:
+          args: |
+            --test \
+            --all \
+            --target unbound \
+            --docker-hub-check
+
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint addon config
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run config check
+        uses: home-assistant/builder@2024.03.5
+        with:
+          args: |
+            --test \
+            --all \
+            --target unbound

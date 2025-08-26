@@ -1,0 +1,29 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+
+bashio::log.info "Starting Unbound..."
+
+# Check if custom config exists in addon_config folder
+if [ -f "/config/unbound.conf" ]; then
+    bashio::log.info "Using custom unbound.conf from addon_config folder"
+    cp /config/unbound.conf /etc/unbound/unbound.conf
+elif [ -f "/data/unbound.conf" ]; then
+    bashio::log.info "Using unbound.conf from data folder"
+    cp /data/unbound.conf /etc/unbound/unbound.conf
+else
+    # Default simple config
+    bashio::log.info "Using default configuration"
+    cat > /etc/unbound/unbound.conf << 'EOF'
+server:
+    interface: 0.0.0.0
+    port: 5353
+    access-control: 0.0.0.0/0 allow
+
+forward-zone:
+    name: "."
+    forward-addr: 1.1.1.1
+EOF
+fi
+
+# Start unbound
+exec unbound -d -c /etc/unbound/unbound.conf
