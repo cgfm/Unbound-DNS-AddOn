@@ -1,4 +1,4 @@
-name: "Unbound DNS Addon Repository"
-url: "https://github.com/YOUR_USERNAME/unbound-addon-repo"
-maintainer: "Your Name <your.email@example.com>"
-description: "Home Assistant addon repository for Unbound DNS resolver"
+name: "Unbound DNS Home Assistant Addon"
+url: "https://github.com/cgfm/Unbound-DNS-AddOn"
+maintainer: "cgfm <o6arumdm@addy.io>"
+description: "Home Assistant addon for Unbound DNS resolver"
