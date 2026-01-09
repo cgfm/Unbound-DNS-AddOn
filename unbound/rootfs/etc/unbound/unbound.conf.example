@@ -1,0 +1,37 @@
+server:
+    # Listen on all interfaces
+    interface: 0.0.0.0
+    port: 5353
+
+    # Access control
+    access-control: 0.0.0.0/0 allow
+
+    # Performance tuning
+    num-threads: 2
+    msg-cache-slabs: 4
+    rrset-cache-slabs: 4
+    infra-cache-slabs: 4
+    key-cache-slabs: 4
+
+    # Cache sizes
+    rrset-cache-size: 100m
+    msg-cache-size: 50m
+
+    # Privacy
+    hide-identity: yes
+    hide-version: yes
+
+    # Security
+    harden-glue: yes
+    harden-dnssec-stripped: yes
+    use-caps-for-id: yes
+
+    # Logging
+    verbosity: 1
+    log-queries: no
+
+forward-zone:
+    name: "."
+    # Cloudflare DNS
+    forward-addr: 1.1.1.1
+    forward-addr: 1.0.0.1

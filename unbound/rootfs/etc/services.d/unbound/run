@@ -3,12 +3,38 @@
 
 bashio::log.info "Starting Unbound..."
 
-# Check if custom config exists in addon_config folder
-if [ -f "/config/unbound.conf" ]; then
-    bashio::log.info "Using custom unbound.conf from addon_config folder"
-    cp /config/unbound.conf /etc/unbound/unbound.conf
+CONFIG_DIR="/config/unbound"
+
+# Create config directory in /config (Home Assistant config folder)
+if [ -d "/config" ] && [ -w "/config" ]; then
+    mkdir -p "${CONFIG_DIR}"
+
+    # Create example config if no config exists yet
+    if [ ! -f "${CONFIG_DIR}/unbound.conf" ] && [ ! -f "${CONFIG_DIR}/unbound.conf.example" ]; then
+        if [ -f "/etc/unbound/unbound.conf.example" ]; then
+            cp /etc/unbound/unbound.conf.example "${CONFIG_DIR}/unbound.conf.example"
+            bashio::log.info "Example config created at: <HA config>/unbound/unbound.conf.example"
+            bashio::log.info "Rename it to unbound.conf and restart the add-on to use it"
+        fi
+    fi
+else
+    bashio::log.warning "/config is not available, using /data for config storage"
+    CONFIG_DIR="/data"
+
+    if [ ! -f "/data/unbound.conf" ] && [ ! -f "/data/unbound.conf.example" ]; then
+        if [ -f "/etc/unbound/unbound.conf.example" ]; then
+            cp /etc/unbound/unbound.conf.example /data/unbound.conf.example
+            bashio::log.info "Example config created at: /data/unbound.conf.example"
+        fi
+    fi
+fi
+
+# Check if custom config exists (check multiple locations)
+if [ -f "/config/unbound/unbound.conf" ]; then
+    bashio::log.info "Using custom unbound.conf from /config/unbound folder"
+    cp /config/unbound/unbound.conf /etc/unbound/unbound.conf
 elif [ -f "/data/unbound.conf" ]; then
-    bashio::log.info "Using unbound.conf from data folder"
+    bashio::log.info "Using custom unbound.conf from /data folder"
     cp /data/unbound.conf /etc/unbound/unbound.conf
 else
     # Default simple config
@@ -24,6 +50,16 @@ forward-zone:
     forward-addr: 1.1.1.1
 EOF
 fi
+
+# Validate configuration
+bashio::log.info "Validating Unbound configuration..."
+if ! unbound-checkconf /etc/unbound/unbound.conf; then
+    bashio::log.error "Configuration validation failed!"
+    bashio::log.error "Please check your unbound.conf file for errors"
+    exit 1
+fi
+
+bashio::log.info "Configuration is valid, starting Unbound..."
 
 # Start unbound
 exec unbound -d -c /etc/unbound/unbound.conf
