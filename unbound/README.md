@@ -32,7 +32,7 @@ This add-on provides a local DNS resolver using Unbound, a validating, recursive
 
 The add-on works with default settings out of the box:
 
-- Listens on port `5353` (both TCP and UDP)
+- Publishes DNS on host port `5335` for TCP and UDP. Unbound listens on port `5353` inside the container.
 - Allows access from all networks
 - Uses Cloudflare DNS (1.1.1.1) as upstream
 
@@ -64,10 +64,11 @@ forward-zone:
 
 ## Usage
 
-After installation:
+Configure clients or DNS forwarders that support a custom DNS port to use the Home Assistant host IP and port `5335`.
 
-1. Configure your network devices to use your Home Assistant IP address with port `5353` as DNS server
-2. Or configure Home Assistant's network settings to use `127.0.0.1:5353` as DNS resolver
+To change the host port, set both TCP and UDP to the same available port under **Configuration → Network** in the app. Keep port `5353` in `unbound.conf` so it matches the container port.
+
+If an existing installation still shows host port `5353`, change both mappings to `5335` and update any clients that use the old port.
 
 ## Support
 
