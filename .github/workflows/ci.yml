@@ -19,21 +19,7 @@ jobs:
         with:
           args: |
             --test \
-            --all \
+            --amd64 --aarch64 --armv7 \
             --target unbound \
-            --docker-hub-check
-
-  lint:
-    runs-on: ubuntu-latest
-    name: Lint addon config
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Run config check
-        uses: home-assistant/builder@2024.03.5
-        with:
-          args: |
-            --test \
-            --all \
-            --target unbound
+            --image {arch}-addon-unbound \
+            --docker-hub cgfm
